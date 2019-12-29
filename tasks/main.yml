@@ -1,0 +1,20 @@
+---
+
+- import_tasks: pre-checks.yml
+
+- include_tasks: "{{ ansible_os_family | lower }}/install-os-dependencies.yml"
+  when: kubectl_install_os_dependencies is defined
+        and kubectl_install_os_dependencies
+
+- import_tasks: get-version.yml
+  when: kubectl_version is not defined or not kubectl_version
+
+- import_tasks: download-kubectl.yml
+
+- import_tasks: install-kubectl.yml
+
+- import_tasks: download-projects.yml
+  when: kubectl_projects is defined
+        and kubectl_projects | length >= 1
+
+- import_tasks: post-checks.yml

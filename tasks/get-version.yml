@@ -1,0 +1,11 @@
+---
+
+- name: Get the version information of the latest release of kubectl
+  uri:
+    url: "{{ kubectl_release_baseurl }}/stable.txt"
+    return_content: true
+  register: kubectl_get_latest_version
+
+- name: Ensure the kubectl_version variable is set
+  set_fact:
+    kubectl_version: "{{ kubectl_get_latest_version.content | regex_replace('^v|\\n$', '') }}"

@@ -1,0 +1,37 @@
+---
+
+- name: Ensure kubectl_install_dir exists
+  file:
+    path: "{{ kubectl_install_dir }}"
+    state: directory
+
+- name: Ensure kubectl_projects_dir exists
+  file:
+    path: "{{ kubectl_projects_dir }}"
+    state: directory
+  when: kubectl_projects_dir is defined and kubectl_projects_dir
+
+- name: Ensure existing kubectl package is moved to keep an copy of the old version
+  command: >
+      mv {{ kubectl_install_dir }}/kubectl
+      {{ kubectl_install_dir }}/kubectl-{{ kubectl_check_existing_version.stdout_lines[0] }}
+  when:
+    kubectl_check_existing.stat.islnk is defined
+    and not kubectl_check_existing.stat.islnk
+    and kubectl_check_existing_version.stdout_lines[0] != kubectl_version
+
+- name: Ensure kubectl binary is copied to the installation directory
+  copy:
+    src: "/tmp/kubectl-{{ kubectl_version }}"
+    dest: "{{ kubectl_install_dir }}/kubectl-{{ kubectl_version }}"
+    remote_src: true
+    mode: 0755
+  when: not kubectl_check_existing.stat.exists
+        or (kubectl_check_existing.stat.exists
+            and kubectl_check_existing_version.stdout_lines[0] != kubectl_version)
+
+- name: Ensure kubectl package is symlinked
+  file:
+    src: "{{ kubectl_install_dir }}/kubectl-{{ kubectl_version }}"
+    dest: "{{ kubectl_install_dir }}/kubectl"
+    state: link

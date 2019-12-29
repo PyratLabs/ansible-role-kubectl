@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    kubectl_install_os_dependencies: yes
+    kubectl_install_dir: /opt/kubectl/bin
+    kubectl_projects_dir: /opt/kubectl/projects
+    kubectl_projects:
+      - name: kubernetes-examples
+        repo: https://github.com/kubernetes/examples
+  roles:
+    - role: xanmanning.kubectl

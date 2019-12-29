@@ -1,0 +1,23 @@
+---
+
+kubectl_arch_lookup:
+  x86:
+    arch: 386
+  amd64:
+    arch: amd64
+  x86_64:
+    arch: amd64
+  arm64:
+    arch: arm
+  aarch64:
+    arch: arm
+  arm:
+    arch: arm
+  arm7:
+    arch: arm
+  armv7l:
+    arch: arm
+  armhf:
+    arch: arm
+
+kubectl_release_baseurl: https://storage.googleapis.com/kubernetes-release/release

@@ -1,0 +1,39 @@
+---
+
+- name: Check where bash is installed
+  command: which bash
+  register: kubectl_check_bash_path
+  failed_when: false
+  changed_when: false
+
+- name: Check that git is installed
+  command: which git
+  register: kubectl_check_git_installed
+  failed_when: false
+  changed_when: false
+
+- name: Fail play if git is not installed
+  fail:
+    msg: git was not found and is required for downloading projects, please ensure this is installed.
+  when: kubectl_check_git_installed.rc > 0
+        and kubectl_projects_dir is defined
+        and kubectl_projects_dir
+        and kubectl_projects is defined
+        and kubectl_projects | length > 0
+        and not kubectl_install_os_dependencies
+
+- name: Check for existing kubectl binary
+  stat:
+    path: "{{ kubectl_install_dir }}/kubectl"
+  register: kubectl_check_existing
+
+- name: Check kubectl binary version if binary already exists
+  shell: >
+    set -o pipefail && \
+      {{ kubectl_install_dir }}/kubectl version --client --short | \
+      awk '{ print $NF }' | sed 's/^v//'
+  args:
+    executable: "{{ kubectl_check_bash_path.stdout_lines[0] }}"
+  changed_when: false
+  register: kubectl_check_existing_version
+  when: kubectl_check_existing.stat.exists

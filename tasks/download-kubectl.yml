@@ -1,0 +1,16 @@
+---
+
+- name: Ensure the kubectl_arch fact is set
+  set_fact:
+    kubectl_arch: "{{ kubectl_arch_lookup[ansible_architecture].arch }}"
+  when: kubectl_arch is not defined
+
+- name: Get the binary path for kubectl
+  set_fact:
+    kubectl_binary_path: "v{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl"
+
+- name: Ensure kubectl binary is downloaded
+  get_url:
+    url: "{{ kubectl_release_baseurl }}/{{ kubectl_binary_path }}"
+    dest: "/tmp/kubectl-{{ kubectl_version }}"
+    mode: 0600

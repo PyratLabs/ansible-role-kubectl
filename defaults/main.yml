@@ -1,0 +1,16 @@
+---
+
+# Use a specific version of kubectl, eg. `1.17.0`. Specify `false` for latest.
+kubectl_version: false
+
+# Allow role to install OS dependencies.
+kubectl_install_os_dependencies: false
+
+# Installation directory for kubectl.
+kubectl_install_dir: "{{ ansible_user_dir }}/bin"
+
+# Directory to put K8s projects. Specify `false` to skip.
+kubectl_projects_dir: "{{ ansible_user_dir }}/projects"
+
+# List of K8s projects to be cloned with `git`. See notes in README.md
+# kubectl_projects: []
